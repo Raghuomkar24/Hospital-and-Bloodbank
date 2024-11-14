@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+struct bloodbank
+{
+  char name[20];
+  int age;
+  char bgrp[5];
+  struct bloodbank *link;
+};
+typedef struct bloodbank *BLOODBANK;
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+BLOODBANK getnode (void)
+{
+  BLOODBANK X;
+  X = (BLOODBANK) malloc (sizeof (struct bloodbank));
+  if (X == NULL)
+	{
+	  printf ("out of memory\n");
+	  exit (0);
+	}
+  return X;
+}
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+void freenode (BLOODBANK X)
+{
+  free (X);
+}
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+BLOODBANK insert (char name[], int age, char bgrp[], BLOODBANK first)
+{
+  BLOODBANK temp;
+  temp = getnode ();
+  strcpy (temp->name, name);
+  strcpy (temp->bgrp, bgrp);
+  temp->age = age;
+  temp->link = first;
+  first = temp;
+  return first;
+}
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa   
+BLOODBANK delete (int age, BLOODBANK first)
+{
+  BLOODBANK pre, cur;
+  if (first == NULL)
+	{
+	  printf ("no student in the organization\n");
+	  return NULL;
+	}
+  pre = NULL;
+  cur = first;
+  while (cur != NULL && age != cur->age)
+	{
+	  pre = cur;
+	  cur = cur->link;
+	}
+  if (cur == NULL)
+	{
+	  printf ("student id not found\n");
+	  return first;
+	}
+  if (pre == NULL)
+	first = first->link;
+  else
+	pre->link = cur->link;
+  free (cur);
+  return first;
+}
+
+void search(char pgrp[], BLOODBANK first) {
+    BLOODBANK cur;
+    if(first == NULL) {
+        printf("DATA List is empty \n ");
+        return;
+    }
+    cur = first;
+    while(cur != NULL) {
+        if(strcmp(pgrp, cur->bgrp) == 0) {
+            printf("Blood group found\n");
+            printf("name of org :%30s\n contact info: %d \n bloodgroup %30s\n \n ",cur->name, cur->age, cur->bgrp);
+            return;
+        }
+        cur = cur->link; 
+    }
+    printf("Blood group not found\n");
+}
+
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+void display (BLOODBANK first)
+{
+  BLOODBANK temp;
+  if (first == NULL)
+	{
+	  printf ("no data available to display \n");
+	  return;
+	}
+  printf ("all data \nname    contact     bloodgroup\n");
+  for (temp = first; temp != NULL; temp = temp->link)
+	printf ("%10s %4d %10s\n", temp->name, temp->age, temp->bgrp);
+  printf ("\n");
+}
+
+//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+void main ()
+{
+  BLOODBANK first = NULL;
+  int choice, age, pos, ch, page, chbg;
+  char name[50], bgrp[5], pname[20],pgrp[5];
+  for (;;)
+	{
+      printf("\n **LOGIN PAGE**\n ");
+	  printf ("Select the Ogranisation you are representating \n 1:hospital \n 2:blood bank \n");
+	  scanf ("%d", &ch);
+	  
+	  switch (ch)
+		{
+		case 1:
+		  printf ("enter patient name ");
+		  scanf ("%s", pname);
+		  printf ("enter patient age");
+		  scanf ("%d", &page);
+		  printf("enter the blood group needed for the patient \n a , a+ , o , b ,b+");
+		  scanf("%s",pgrp);
+		  search(pgrp, first);
+		  display (first);
+		  break;
+		case 2:
+		  printf ("make a choice \n1:update data \n2:delete data \n");
+		  scanf ("%d", &chbg);
+		  switch (chbg)
+			{
+			case 1:
+			  {
+				printf ("name of the blood bank organisation:");
+				scanf ("%s", name);
+				printf ("contact info:");
+				scanf ("%d", &age);
+				printf ("bgrp:");
+				scanf ("%s", bgrp);
+				printf("Data updated Succesfully");
+
+			  }
+			first = insert (name, age, bgrp, first);
+			break;
+			case 2:
+			  first = delete (age, first);
+			  break;
+			default:
+			exit (0);
+			
+		}
+	}
+	    
+	}
+}
